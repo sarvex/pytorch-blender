@@ -16,7 +16,7 @@ def create_renderer(backend=None, **kwargs):
     """
     if backend is None:
         avail = [RENDER_BACKENDS[l] for l in LOOKUP_ORDER if l in RENDER_BACKENDS]
-        assert len(avail) > 0, "No render backends available."
+        assert avail, "No render backends available."
         kls = avail[0]
     else:
         assert backend in RENDER_BACKENDS, f"Render backend {backend} not found."

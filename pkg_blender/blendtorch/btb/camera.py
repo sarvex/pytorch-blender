@@ -56,8 +56,7 @@ class Camera:
         """Returns the image shape as (HxW) from the given render settings."""
         render = bpy_render or bpy.context.scene.render
         scale = render.resolution_percentage / 100.0
-        shape = (int(render.resolution_y * scale), int(render.resolution_x * scale))
-        return shape
+        return int(render.resolution_y * scale), int(render.resolution_x * scale)
 
     @staticmethod
     def view_from_bpy(bpy_camera):
@@ -152,8 +151,7 @@ class Camera:
             return px, z
         else:
             ndc = self.world_to_ndc(utils.world_coordinates(*objs))
-            px = self.ndc_to_pixel(ndc)
-            return px
+            return self.ndc_to_pixel(ndc)
 
     def bbox_object_to_pixel(self, *objs, return_depth=False):
         """Convenience composition of `ndc_to_pixel(world_to_ndc(utils.bbox_world_coordinates(*objs)))`
@@ -180,8 +178,7 @@ class Camera:
             return px, z
         else:
             ndc = self.world_to_ndc(utils.bbox_world_coordinates(*objs))
-            px = self.ndc_to_pixel(ndc)
-            return px
+            return self.ndc_to_pixel(ndc)
 
     def look_at(self, look_at=None, look_from=None):
         """Helper function to look at specific location."""

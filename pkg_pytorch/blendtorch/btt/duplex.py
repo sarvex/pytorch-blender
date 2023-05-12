@@ -37,10 +37,7 @@ class DuplexChannel:
             Message received or None.
         """
         socks = dict(self.poller.poll(timeoutms))
-        if self.sock in socks:
-            return self.sock.recv_pyobj()
-        else:
-            return None
+        return self.sock.recv_pyobj() if self.sock in socks else None
 
     def send(self, **kwargs):
         """Send a message to remote Blender process.

@@ -28,7 +28,7 @@ class CartpoleEnv(btb.env.BaseEnv):
         c = self.cart.matrix_world.translation[0]
         p = self.pole.matrix_world.translation[0]
         a = self.pole.matrix_world.to_euler("XYZ")[1]
-        return dict(obs=(c, p, a), reward=0.0, done=bool(abs(a) > 0.6 or abs(c) > 4.0))
+        return dict(obs=(c, p, a), reward=0.0, done=abs(a) > 0.6 or abs(c) > 4.0)
 
     def _apply_motor_force(self, f):
         # a = f/m

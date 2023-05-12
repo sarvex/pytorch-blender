@@ -105,11 +105,11 @@ class BlenderLauncher:
         """Launch processes"""
         assert self.launch_info is None, "Already launched."
 
-        addresses = {}
         addrgen = self._address_generator(self.proto, self.bind_addr, self.start_port)
-        for s in self.named_sockets:
-            addresses[s] = [next(addrgen) for _ in range(self.num_instances)]
-
+        addresses = {
+            s: [next(addrgen) for _ in range(self.num_instances)]
+            for s in self.named_sockets
+        }
         seed = self.seed
         if seed is None:
             seed = np.random.randint(np.iinfo(np.int32).max - self.num_instances)
@@ -130,25 +130,29 @@ class BlenderLauncher:
             iargs.extend(self.instance_args[idx])
 
         popen_kwargs = {}
-        if os.name == "posix":
-            popen_kwargs = {"preexec_fn": os.setsid}
-        elif os.name == "nt":
+        if os.name == "nt":
             popen_kwargs = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
 
+        elif os.name == "posix":
+            popen_kwargs = {"preexec_fn": os.setsid}
         processes = []
         commands = []
         env = os.environ.copy()
         for idx, script_args in enumerate(instance_script_args):
             cmd = [f'{self.blender_info["path"]}']
-            if self.scene is not None and len(str(self.scene)) > 0:
+            if self.scene is not None and str(self.scene) != "":
                 cmd.append(f"{self.scene}")
             if self.background:
                 cmd.append("--background")
-            cmd.append("--python-use-system-env")
-            cmd.append("--enable-autoexec")
-            cmd.append("--python")
-            cmd.append(f"{self.script}")
-            cmd.append("--")
+            cmd.extend(
+                (
+                    "--python-use-system-env",
+                    "--enable-autoexec",
+                    "--python",
+                    f"{self.script}",
+                    "--",
+                )
+            )
             cmd.extend(script_args)
 
             p = subprocess.Popen(
@@ -173,7 +177,7 @@ class BlenderLauncher:
         if self.launch_info is None:
             return
         codes = self._poll()
-        assert all([c is None for c in codes]), f"Alive test failed. Exit codes {codes}"
+        assert all(c is None for c in codes), f"Alive test failed. Exit codes {codes}"
 
     def wait(self):
         """Wait until all launched processes terminate."""
@@ -182,17 +186,13 @@ class BlenderLauncher:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Terminate all processes."""
         all_closed = all(
-            [
-                self._kill_tree(p.pid, sig=signal.SIGTERM, timeout=5.0)
-                for p in self.launch_info.processes
-            ]
+            self._kill_tree(p.pid, sig=signal.SIGTERM, timeout=5.0)
+            for p in self.launch_info.processes
         )
         if not all_closed:
             all_closed = all(
-                [
-                    self._kill_tree(p.pid, sig=signal.SIGKILL, timeout=5.0)
-                    for p in self.launch_info.processes
-                ]
+                self._kill_tree(p.pid, sig=signal.SIGKILL, timeout=5.0)
+                for p in self.launch_info.processes
             )
         self.launch_info = None
         if not all_closed:

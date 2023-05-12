@@ -41,7 +41,7 @@ def test_launcher():
     with btt.BlenderLauncher(**LAUNCH_ARGS) as bl:
         addr = bl.launch_info.addresses["DATA"]
         ds = btt.RemoteIterableDataset(addr, max_items=2)
-        items = [item for item in ds]
+        items = list(ds)
         _validate_result(items)
 
 
@@ -64,7 +64,7 @@ def test_launcher_connected_remote(tmp_path):
     path = q.get()
     launch_info = btt.LaunchInfo.load_json(path)
     ds = btt.RemoteIterableDataset(launch_info.addresses["DATA"], max_items=2)
-    items = [item for item in ds]
+    items = list(ds)
     _validate_result(items)
     p.join()
 
@@ -97,7 +97,7 @@ def test_launcher_app(tmp_path):
 
     launch_info = btt.LaunchInfo.load_json(path)
     ds = btt.RemoteIterableDataset(launch_info.addresses["DATA"], max_items=2)
-    items = [item for item in ds]
+    items = list(ds)
     _validate_result(items)
 
     p.join()
@@ -120,7 +120,7 @@ def test_launcher_app_primaryip(tmp_path):
     launch_info = btt.LaunchInfo.load_json(path)
     print(launch_info.addresses)
     ds = btt.RemoteIterableDataset(launch_info.addresses["DATA"], max_items=2)
-    items = [item for item in ds]
+    items = list(ds)
     _validate_result(items)
 
     p.join()

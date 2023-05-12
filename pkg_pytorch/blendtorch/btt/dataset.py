@@ -103,7 +103,7 @@ class RemoteIterableDataset(utils.data.IterableDataset):
                         )
                     )
 
-                for i in range(self.max_items // num_workers):
+                for _ in range(self.max_items // num_workers):
                     socks = dict(poller.poll(self.timeoutms))
                     assert socket in socks, "No response within timeout interval."
                     if rec:

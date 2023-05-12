@@ -21,7 +21,4 @@ def gamma(x, coeff=2.2):
     """
     y = x[..., :3].astype(np.float32) / 255
     y = np.uint8(255.0 * y ** (1 / 2.2))
-    if x.shape[-1] == 3:
-        return y
-    else:
-        return np.concatenate((y, x[..., 3:4]), axis=-1)
+    return y if x.shape[-1] == 3 else np.concatenate((y, x[..., 3:4]), axis=-1)

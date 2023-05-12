@@ -219,10 +219,11 @@ class RemoteControlledAgent:
 
     def __call__(self, env, **ctx):
         """Process agent environment callback."""
-        flags = 0
-        if self.real_time and (env.state == BaseEnv.STATE_RUN):
-            flags = zmq.NOBLOCK
-
+        flags = (
+            zmq.NOBLOCK
+            if self.real_time and (env.state == BaseEnv.STATE_RUN)
+            else 0
+        )
         if self.state == RemoteControlledAgent.STATE_REP:
             try:
                 self.socket.send_pyobj(ctx, flags=flags)

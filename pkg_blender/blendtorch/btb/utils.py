@@ -20,7 +20,7 @@ def find_first_view3d():
 
     """
     areas = [a for a in bpy.context.screen.areas if a.type == "VIEW_3D"]
-    assert len(areas) > 0
+    assert areas
     area = areas[0]
     region = sorted(
         [r for r in area.regions if r.type == "WINDOW"],
@@ -28,7 +28,7 @@ def find_first_view3d():
         reverse=True,
     )[0]
     spaces = [s for s in areas[0].spaces if s.type == "VIEW_3D"]
-    assert len(spaces) > 0
+    assert spaces
     return area, spaces[0], region
 
 

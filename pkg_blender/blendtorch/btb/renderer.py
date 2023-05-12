@@ -72,7 +72,7 @@ class CompositeRenderer:
 
         def node_from_name(name):
             nodes = [n for n in self.outnodes if n.name == name]
-            assert len(nodes) > 0, f"Could not find output node {name}"
+            assert nodes, f"Could not find output node {name}"
             return nodes[0]
 
         def exr_from_slots(slots):
@@ -100,9 +100,7 @@ class CompositeRenderer:
 
         outnodes_ok = [n for n in outnodes if is_compatible(n)]
         # outnodes_dropped = [n for n in outnodes if not is_compatible(n)]
-        assert (
-            len(outnodes_ok) > 0
-        ), "Could not find a single compatible output filenode"
+        assert outnodes_ok, "Could not find a single compatible output filenode"
         return outnodes_ok
 
     def _update_output_paths(self, outnodes):

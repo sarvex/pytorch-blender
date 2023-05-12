@@ -154,8 +154,7 @@ def get_target_images(dl, remotes, mu_m1m2, std_m1m2, n):
 def infinite_batch_generator(dl):
     """Generate infinite number of batches from a dataloader."""
     while True:
-        for d in dl:
-            yield d
+        yield from dl
 
 
 class Discriminator(nn.Module):
@@ -364,8 +363,7 @@ def run(args):
                 param_history.append(target)
                 break
 
-        param_history = torch.stack(param_history)
-        return param_history
+        return torch.stack(param_history)
 
 
 if __name__ == "__main__":
